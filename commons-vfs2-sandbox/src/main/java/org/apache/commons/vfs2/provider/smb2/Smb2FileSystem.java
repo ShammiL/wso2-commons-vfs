@@ -95,10 +95,10 @@ public class Smb2FileSystem extends AbstractFileSystem {
      */
     public void putClient(SMBClient smbClient) {
         if (isClosed) {
-            smbClient.close();
+            ((Smb2ClientWrapper)smbClient).close();
         } else if (!client.compareAndSet(null, smbClient)) {
             // An idle client is already present so close the connection.
-            smbClient.close();
+            ((Smb2ClientWrapper)smbClient).close();
         }
     }
 }
