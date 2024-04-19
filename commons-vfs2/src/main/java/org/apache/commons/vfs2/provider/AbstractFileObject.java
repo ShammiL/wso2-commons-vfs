@@ -87,6 +87,7 @@ public abstract class AbstractFileObject<AFS extends AbstractFileSystem> impleme
     private List<Object> objects;
 
     private boolean updateLastModified;
+    private boolean isMounted;
 
     /**
      * FileServices instance.
@@ -103,6 +104,7 @@ public abstract class AbstractFileObject<AFS extends AbstractFileSystem> impleme
         this.fileName = name;
         this.fs = fs;
         this.updateLastModified = true;
+        this.isMounted = false;
         fs.fileObjectHanded(this);
     }
 
@@ -112,6 +114,14 @@ public abstract class AbstractFileObject<AFS extends AbstractFileSystem> impleme
 
     public void setUpdateLastModified(boolean updateLastModified) {
         this.updateLastModified = updateLastModified;
+    }
+
+    public boolean getIsMounted() {
+        return isMounted;
+    }
+
+    public void setIsMounted(boolean isMounted) {
+        this.isMounted = isMounted;
     }
 
     /**
@@ -188,6 +198,10 @@ public abstract class AbstractFileObject<AFS extends AbstractFileSystem> impleme
      */
     @Override
     public boolean canRenameTo(final FileObject newfile) {
+        // If volume mounted, it is considered as two different file systems, hence cannot rename.
+        if (newfile.getIsMounted()) {
+            return false;
+        }
         return fs == newfile.getFileSystem();
     }
 
